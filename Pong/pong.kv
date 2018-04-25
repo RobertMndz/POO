@@ -1,0 +1,44 @@
+#:kivy 1.0.9
+
+<PongBall>:
+    size: 50, 50
+    canvas:
+        Ellipse:
+            pos: self.pos
+            size: self.size
+
+<PongGame>:
+    ball: pong_ball
+    player1: player_left
+    player2: player_right
+
+    canvas:
+        Rectangle:
+            pos: 0 , self.center_y - 9
+            size: self.width, 20
+
+    Label:
+        font_size: 50
+        center_x: root.width / 13
+        top: root.top - 170
+        text: "0"
+
+    Label:
+        font_size: 50
+        center_x: (root.width * 12) / 13
+        top: root.top - 310
+        text: "0"
+
+    PongBall:
+        id: pong_ball
+        center: self.parent.center
+
+    PongPaddle:
+        id: player_left
+        x: root.x
+        center_y: root.center_y
+
+    PongPaddle:
+        id: player_right
+        x: root.width-self.width
+        center_y: root.center_y
