@@ -12,12 +12,11 @@ class PongPaddle(Widget):
 
     def bounce_ball(self, ball):
         if self.collide_widget(ball):
-            vx = ball.velocity
-            vy = ball.velocity
-            offset = (ball.center_x - self.center_x) / (self.width / 2)
-            bounced = Vector(-1 * vx, vy)
+            vx, vy = ball.velocity
+            offset = (ball.center_y - self.center_y) / (self.height / 2)
+            bounced = Vector(vx, -1 * vy)
             vel = bounced * 1.1
-            ball.velocity = vel.y, vel.x + offset
+            ball.velocity = vel.x, vel.y + offset
 
 
 class PongBall(Widget):
@@ -31,11 +30,14 @@ class PongBall(Widget):
 
 class PongGame(Widget):
     ball = ObjectProperty(None)
+    player1 = ObjectProperty(None)
+    player2 = ObjectProperty(None)
 
-    def serve_ball(self, vel=(4, 0)):
+    def serve_ball(self, vel=(0, 4)):
         self.ball.center = self.center
-        # self.ball.velocity = vel.rotate(randint(0, 360))
-        self.ball.velocity = vel
+        v = Vector(vel)
+        self.ball.velocity = v.rotate(randint(10, 170))
+        # self.ball.velocity = vel
 
     def update(self, dt):
         self.ball.move()
@@ -44,21 +46,17 @@ class PongGame(Widget):
         self.player1.bounce_ball(self.ball)
         self.player2.bounce_ball(self.ball)
 
-        # bounce off top and bottom
-        if (self.ball.y < 0) or (self.ball.top > self.height):
-            self.ball.velocity_y *= -1
-
         # bounce off left and right
         if (self.ball.x < 0) or (self.ball.right > self.width):
             self.ball.velocity_x *= -1
 
         # went of to a side to score point?
         if self.ball.y < self.y:
-            self.player2.score += 1
-            self.serve_ball(vel=(4, 0))
-        if self.ball.y > self.height:
             self.player1.score += 1
-            self.serve_ball(vel=(-4, 0))
+            self.serve_ball(vel=(0, 4))
+        if self.ball.y > self.height:
+            self.player2.score += 1
+            self.serve_ball(vel=(0, -4))
 
     def on_touch_move(self, touch):
         if touch.y < self.height / 3:
